@@ -166,13 +166,16 @@
         
         if (_mainController.nearbyPlayers.count > indexPath.row) {
 
-            //Create a table view controller for this player with options
-            self.pViewCtrlr = [[PlayerTableViewController alloc] initWithStyle:UITableViewStyleGrouped];
-            _pViewCtrlr.player = _mainController.nearbyPlayers.allObjects[indexPath.row];
-            _pViewCtrlr.mainViewController = _mainController;
+            [_mainController invitePlayerToMatch:_mainController.nearbyPlayers.allObjects[indexPath.row]];
+
             
-            //Push onto the current navigation controller.
-            [self.navigationController pushViewController:_pViewCtrlr animated:YES];
+//            //Create a table view controller for this player with options
+//            self.pViewCtrlr = [[PlayerTableViewController alloc] initWithStyle:UITableViewStyleGrouped];
+//            _pViewCtrlr.player = _mainController.nearbyPlayers.allObjects[indexPath.row];
+//            _pViewCtrlr.mainViewController = _mainController;
+//            
+//            //Push onto the current navigation controller.
+//            [self.navigationController pushViewController:_pViewCtrlr animated:YES];
 
         }
         

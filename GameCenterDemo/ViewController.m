@@ -124,6 +124,8 @@
        player:(GKPlayer *)player
 didChangeConnectionState:(GKPlayerConnectionState)state {
     
+    NSLog(@"PLAYER CHANGED STATE: %@", [self nameForPlayerState:state]);
+    
     if (match.players.count == 0)
         [self endMatch];
     else {
@@ -331,6 +333,27 @@ didChangeConnectionState:(GKPlayerConnectionState)state {
     }
     return YES;
     
+}
+
+#pragma mark Utility
+-(NSString*)nameForPlayerState:(GKPlayerConnectionState)state {
+    
+    switch (state) {
+        case GKPlayerStateConnected:
+            return @"GKPlayerStateConnected";
+            break;
+            
+        case GKPlayerStateDisconnected:
+            return @"GKPlayerStateDisconnected";
+            break;
+            
+        case GKPlayerStateUnknown:
+            return @"GKPlayerStateUnknown";
+            break;
+            
+        default:
+            break;
+    }
 }
 
 

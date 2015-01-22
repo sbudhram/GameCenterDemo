@@ -27,6 +27,7 @@
 -(void)updateConnectedChatPlayers:(BOOL)on;
 -(void)setPlayer:(GKPlayer*)player muted:(BOOL)muted;
 -(BOOL)isPlayerMuted:(GKPlayer*)player;
+-(NSString*)nameForPlayerState:(GKPlayerConnectionState)state;
 
 @end
 
