@@ -69,26 +69,26 @@
             _loginStatus.autoresizingMask = UIViewAutoresizingFlexibleWidth;
             [cell.contentView addSubview:_loginStatus];
             
+            UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+            [btn setTitle:@"Use GKMatchMakerViewController" forState:UIControlStateNormal];
+            [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+            btn.frame = CGRectMake(MARGIN,
+                                   _loginStatus.frame.origin.y + _loginStatus.frame.size.height + MARGIN,
+                                   cell.contentView.bounds.size.width - MARGIN*2,
+                                   _loginStatus.bounds.size.height);
+            btn.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+            btn.layer.borderWidth=1.0f;
+            btn.layer.borderColor=[[UIColor blackColor] CGColor];
+            [btn addTarget:_mainController action:@selector(launchMatchMaker) forControlEvents:UIControlEventTouchUpInside];
+            [cell.contentView addSubview:btn];
+            
             self.connectedPlayers = [[UILabel alloc] initWithFrame:CGRectMake(MARGIN,
-                                                                              _loginStatus.frame.origin.y + _loginStatus.frame.size.height,
+                                                                              btn.frame.origin.y + btn.frame.size.height,
                                                                               cell.contentView.bounds.size.width - MARGIN*2,
                                                                               60)];
             _connectedPlayers.numberOfLines = 2;
             _connectedPlayers.autoresizingMask = UIViewAutoresizingFlexibleWidth;
             [cell.contentView addSubview:_connectedPlayers];
-        
-            UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
-            [btn setTitle:@"Connect via GKMatchMakerViewController" forState:UIControlStateNormal];
-            [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-            btn.frame = CGRectMake(cell.contentView.bounds.size.width - MARGIN - 350,
-                                   MARGIN,
-                                   350,
-                                   _loginStatus.bounds.size.height);
-            btn.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
-            btn.layer.borderWidth=1.0f;
-            btn.layer.borderColor=[[UIColor blackColor] CGColor];
-            [btn addTarget:_mainController action:@selector(launchMatchMaker) forControlEvents:UIControlEventTouchUpInside];
-            [cell.contentView addSubview:btn];
         
         
         }
@@ -231,7 +231,7 @@
         _loginStatus.text = @"Connected.  Now searching for nearby players...";
     }
     else {
-        _loginStatus.text = @"Connected.  Touch to search for players.";
+        _loginStatus.text = @"Connected.  Touch here to search for players.";
     }
     
     if (!_mainController.match) {

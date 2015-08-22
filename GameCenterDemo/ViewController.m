@@ -69,7 +69,7 @@
                 [localPlayer unregisterAllListeners];
                 [localPlayer registerListener:self];
                 
-                _gcStatusCtrlr.loginStatus.text = @"Connected.  Touch to search for players.";
+                _gcStatusCtrlr.loginStatus.text = @"Connected.  Touch here to search for players.";
                 
             }
             else
