@@ -20,6 +20,7 @@
 @property (nonatomic) BOOL browsingForPlayers;
 @property (nonatomic) NSMutableSet *nearbyPlayers;
 @property (nonatomic) NSMutableDictionary *muteStates;      //Dictionary to hold the muted state of a player, since there is apparently no way to get this from the API
+@property (nonatomic) GKMatchmakerViewController *matchCtrlr;
 
 -(void)toggleSearchingForPlayers;
 -(void)invitePlayerToMatch:(GKPlayer*)player;
@@ -28,6 +29,6 @@
 -(void)setPlayer:(GKPlayer*)player muted:(BOOL)muted;
 -(BOOL)isPlayerMuted:(GKPlayer*)player;
 -(NSString*)nameForPlayerState:(GKPlayerConnectionState)state;
-
+-(void)launchMatchMaker;
 @end
 

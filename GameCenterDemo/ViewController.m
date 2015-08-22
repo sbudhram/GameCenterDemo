@@ -12,7 +12,7 @@
 #import <GameKit/GameKit.h>
 #import <AVFoundation/AVFoundation.h>
 
-@interface ViewController ()
+@interface ViewController () <GKMatchmakerViewControllerDelegate>
 
 @end
 
@@ -69,7 +69,7 @@
                 [localPlayer unregisterAllListeners];
                 [localPlayer registerListener:self];
                 
-                _gcStatusCtrlr.loginStatus.text = @"Game Center Connected.  Touch to search for players.";
+                _gcStatusCtrlr.loginStatus.text = @"Connected.  Touch to search for players.";
                 
             }
             else
@@ -88,6 +88,18 @@
         localPlayer.authenticateHandler = authenticationHandler;
         gcAuthenticationCalled = YES;
     }
+}
+
+- (void)launchMatchMaker {
+    
+    GKMatchRequest *request = [[GKMatchRequest alloc] init];
+    request.minPlayers = 2;
+    request.maxPlayers = 2;
+    _matchCtrlr = [[GKMatchmakerViewController alloc] initWithMatchRequest:request];
+    _matchCtrlr.matchmakerDelegate = self;
+
+    [_gcStatusCtrlr presentViewController:_matchCtrlr animated:YES completion:nil];
+
 }
 
 #pragma mark GKInviteEventListenerProtocol methods
@@ -354,6 +366,38 @@ didChangeConnectionState:(GKPlayerConnectionState)state {
         default:
             break;
     }
+}
+
+
+
+- (void)matchmakerViewControllerWasCancelled:(GKMatchmakerViewController *)viewController {
+
+    NSLog(@"Cancelled.");
+    [_matchCtrlr dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)matchmakerViewController:(GKMatchmakerViewController *)viewController
+                didFailWithError:(NSError *)error
+{
+    NSLog(@"Failed.");
+    [_matchCtrlr dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)matchmakerViewController:(GKMatchmakerViewController *)viewController
+                    didFindMatch:(GKMatch *)match
+
+{
+    NSLog(@"Match Found!");
+    [_matchCtrlr dismissViewControllerAnimated:YES completion:nil];
+
+    [self updateWithMatch:match];
+    
+    for (GKPlayer *player in match.players) {
+        [_nearbyPlayers addObject:player];
+    }
+
+    [_gcStatusCtrlr updateStatus];
+
 }
 
 
