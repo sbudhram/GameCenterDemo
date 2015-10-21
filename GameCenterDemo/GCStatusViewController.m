@@ -40,6 +40,10 @@
         if ([[GKLocalPlayer localPlayer] isAuthenticated] && _mainController.browsingForPlayers)
             return MAX(1, [self playerCount]);
     }
+    else if (section == SECTION_FRIENDS) {
+        if ([[GKLocalPlayer localPlayer] isAuthenticated] && _mainController.friends != nil)
+            return MAX(1, _mainController.friends.count);
+    }
     else if (section == SECTION_DISCONNECT) {
         return (_mainController.match.players.count > 0 ? OPTIONROW_COUNT : 0);
     }
@@ -116,6 +120,24 @@
             cell.textLabel.text = player.displayName;
         }
     }
+    else if (indexPath.section == SECTION_FRIENDS) {
+        //Player cell
+        if (_mainController.friends.count == 0) {
+            cell = [tableView dequeueReusableCellWithIdentifier:@"NoFriends"];
+            if (cell == nil) {
+                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"NoFriends"];
+            }
+            cell.textLabel.text = @"No Friends";
+        }
+        else {
+            cell = [tableView dequeueReusableCellWithIdentifier:@"PlayerCell"];
+            if (cell == nil) {
+                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"PlayerCell"];
+            }
+            GKPlayer *player = _mainController.friends[indexPath.row];
+            cell.textLabel.text = player.displayName;
+        }
+    }
     else if (indexPath.section == SECTION_DISCONNECT) {
         if (indexPath.row == OPTIONROW_DISCONNECT) {
             cell = [tableView dequeueReusableCellWithIdentifier:@"Disconnect"];
@@ -144,6 +166,11 @@
     else if (section == SECTION_GCPLAYERS) {
         if ([[GKLocalPlayer localPlayer] isAuthenticated] && _mainController.browsingForPlayers) {
             return @"Nearby Players";
+        }
+    }
+    else if (section == SECTION_FRIENDS) {
+        if ([[GKLocalPlayer localPlayer] isAuthenticated] && _mainController.friends != nil) {
+            return @"GameCenter Friends";
         }
     }
     else if (section == SECTION_DISCONNECT) {
@@ -183,21 +210,18 @@
     else if (indexPath.section == SECTION_GCPLAYERS) {
         
         if (_mainController.nearbyPlayers.count > indexPath.row) {
-
-            [_mainController invitePlayerToMatch:_mainController.nearbyPlayers.allObjects[indexPath.row]];
-
             
-//            //Create a table view controller for this player with options
-//            self.pViewCtrlr = [[PlayerTableViewController alloc] initWithStyle:UITableViewStyleGrouped];
-//            _pViewCtrlr.player = _mainController.nearbyPlayers.allObjects[indexPath.row];
-//            _pViewCtrlr.mainViewController = _mainController;
-//            
-//            //Push onto the current navigation controller.
-//            [self.navigationController pushViewController:_pViewCtrlr animated:YES];
-
+            [_mainController invitePlayerToMatch:_mainController.nearbyPlayers.allObjects[indexPath.row]];
+            
         }
+    }
+    else if (indexPath.section == SECTION_FRIENDS) {
         
-        
+        if (_mainController.friends.count > indexPath.row) {
+            
+            [_mainController invitePlayerToMatch:_mainController.friends[indexPath.row]];
+            
+        }
     }
     else if (indexPath.section == SECTION_DISCONNECT) {
         

@@ -71,6 +71,37 @@
                 
                 _gcStatusCtrlr.loginStatus.text = @"Connected.  Touch here to search for players.";
                 
+                //Download friend information
+                [[GKLocalPlayer localPlayer] loadFriendPlayersWithCompletionHandler:^(NSArray *friendPlayers, NSError *error) {
+                    
+                    if (error) {
+                        NSLog(@"There was an error loading friends: %@", [error description]);
+                    }
+                    
+                    self.friends = nil;
+                    
+                    if (friendPlayers && [friendPlayers count] > 0) {
+                        
+                        self.friends = [NSMutableArray arrayWithCapacity:[friendPlayers count]];
+                        
+                        NSLog(@"%d friends found.", (u_int32_t)[friendPlayers count]);
+                        NSLog(@"Friends: %@", [friendPlayers description]);
+                        for (GKPlayer *p in friendPlayers) {
+                            [_friends addObject:p];
+                        }
+                    }
+                    else {
+                        
+                        //This person has no friends.
+                        NSLog(@"GAMECENTER: This person has no friends.");
+                        self.friends = [NSMutableArray arrayWithCapacity:1];
+                        //Post a notification that friends were updated
+                        
+                    }
+                    
+                    //Signal reload of table view
+                    [_gcStatusCtrlr.tableView reloadSections:[NSIndexSet indexSetWithIndex:SECTION_FRIENDS] withRowAnimation:UITableViewRowAnimationAutomatic];
+                }];
             }
             else
             {

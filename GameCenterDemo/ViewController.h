@@ -18,6 +18,7 @@
 @property (nonatomic) GKMatch *match;
 @property (nonatomic) GKVoiceChat *chat;
 @property (nonatomic) BOOL browsingForPlayers;
+@property (nonatomic) NSMutableArray *friends;
 @property (nonatomic) NSMutableSet *nearbyPlayers;
 @property (nonatomic) NSMutableDictionary *muteStates;      //Dictionary to hold the muted state of a player, since there is apparently no way to get this from the API
 @property (nonatomic) GKMatchmakerViewController *matchCtrlr;

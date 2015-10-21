@@ -13,6 +13,7 @@
 typedef enum {
     SECTION_GCSTATUS,
     SECTION_GCPLAYERS,
+    SECTION_FRIENDS,
     SECTION_DISCONNECT,
     SECTION_COUNT,
 } TableSection;
