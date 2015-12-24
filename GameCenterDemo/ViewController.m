@@ -100,7 +100,7 @@
                     }
                     
                     //Signal reload of table view
-                    [_gcStatusCtrlr.tableView reloadSections:[NSIndexSet indexSetWithIndex:SECTION_FRIENDS] withRowAnimation:UITableViewRowAnimationAutomatic];
+                    [_gcStatusCtrlr.tableView reloadData];
                 }];
             }
             else
@@ -226,6 +226,12 @@ didChangeConnectionState:(GKPlayerConnectionState)state {
 
 #pragma mark Player invitataion handling
 -(void)invitePlayerToMatch:(GKPlayer*)player {
+
+    [self invitePlayerToMatch:player randomStatus:0];
+    
+}
+
+-(void)invitePlayerToMatch:(GKPlayer*)player randomStatus:(BOOL)status {
     
     void (^recipientResponseHandler)(GKPlayer*, GKInviteeResponse) =  ^( GKPlayer *player, GKInviteRecipientResponse response) {
         
@@ -251,8 +257,21 @@ didChangeConnectionState:(GKPlayerConnectionState)state {
     mRequest.minPlayers = 2;
     mRequest.maxPlayers = 4;
     mRequest.defaultNumberOfPlayers = 4;
-    mRequest.recipients = @[player];
     mRequest.recipientResponseHandler = recipientResponseHandler;
+    if (player) {
+        mRequest.recipients = @[player];
+    }
+    else {
+        //Random match
+        if (status == 0) {
+            //Inviter.
+            mRequest.playerAttributes = 0xFFFF0000;
+        }
+        else {
+            //Accepter.
+            mRequest.playerAttributes = 0x0000FFFF;
+        }
+    }
     
     void (^matchCreateCompletionHandler)(GKMatch*, NSError*) = ^(GKMatch *match, NSError *error) {
         
@@ -271,6 +290,8 @@ didChangeConnectionState:(GKPlayerConnectionState)state {
         }
         else {
             
+            NSLog(@"Match successfully created!");
+            
             //We have a new match object.
             [self updateWithMatch:match];
             
@@ -284,8 +305,10 @@ didChangeConnectionState:(GKPlayerConnectionState)state {
     
     //If there is no match, create one.
     if (!_match) {
-        
-        [[GKMatchmaker sharedMatchmaker] findMatchForRequest:mRequest withCompletionHandler:matchCreateCompletionHandler];
+//        [[GKMatchmaker sharedMatchmaker] cancel];
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [[GKMatchmaker sharedMatchmaker] findMatchForRequest:mRequest withCompletionHandler:matchCreateCompletionHandler];
+//        });
     }
     else {
         

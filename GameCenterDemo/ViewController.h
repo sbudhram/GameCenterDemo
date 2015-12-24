@@ -25,6 +25,7 @@
 
 -(void)toggleSearchingForPlayers;
 -(void)invitePlayerToMatch:(GKPlayer*)player;
+-(void)invitePlayerToMatch:(GKPlayer*)player randomStatus:(BOOL)status;
 -(void)endMatch;
 -(void)updateConnectedChatPlayers:(BOOL)on;
 -(void)setPlayer:(GKPlayer*)player muted:(BOOL)muted;

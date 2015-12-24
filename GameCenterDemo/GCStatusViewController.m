@@ -40,6 +40,10 @@
         if ([[GKLocalPlayer localPlayer] isAuthenticated] && _mainController.browsingForPlayers)
             return MAX(1, [self playerCount]);
     }
+    else if (section == SECTION_RANDOM) {
+        if ([[GKLocalPlayer localPlayer] isAuthenticated])
+            return 2;
+    }
     else if (section == SECTION_FRIENDS) {
         if ([[GKLocalPlayer localPlayer] isAuthenticated] && _mainController.friends != nil)
             return MAX(1, _mainController.friends.count);
@@ -101,6 +105,16 @@
         
         _loginStatus.text = @"Checking Connection Status...";
         _connectedPlayers.text = @"Connected Players: None";
+    }
+    else if (indexPath.section == SECTION_RANDOM) {
+        cell = [tableView dequeueReusableCellWithIdentifier:@"Random"];
+        if (cell == nil) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Random"];
+        }
+        if (indexPath.row == 0)
+            cell.textLabel.text = @"Invite Random";
+        else
+            cell.textLabel.text = @"Accept Random";
     }
     else if (indexPath.section == SECTION_GCPLAYERS) {
         //Player cell
@@ -168,6 +182,11 @@
             return @"Nearby Players";
         }
     }
+    else if (section == SECTION_RANDOM) {
+        if ([[GKLocalPlayer localPlayer] isAuthenticated]) {
+            return @"Random Game";
+        }
+    }
     else if (section == SECTION_FRIENDS) {
         if ([[GKLocalPlayer localPlayer] isAuthenticated] && _mainController.friends != nil) {
             return @"GameCenter Friends";
@@ -205,6 +224,16 @@
         else {
             //Toggle searching status
             [_mainController toggleSearchingForPlayers];
+        }
+    }
+    else if (indexPath.section == SECTION_RANDOM) {
+        if (indexPath.row == 0) {
+            //Invite a random player
+            [_mainController invitePlayerToMatch:nil randomStatus:0];
+        }
+        else {
+            //Accept a random invitation
+            [_mainController invitePlayerToMatch:nil randomStatus:1];
         }
     }
     else if (indexPath.section == SECTION_GCPLAYERS) {
@@ -247,40 +276,44 @@
 
 -(void)updateStatus {
     
-    //Reload nearby players/disconnect
-    [self.tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(SECTION_GCPLAYERS, 2)]
-                  withRowAnimation:UITableViewRowAnimationAutomatic];
+    dispatch_async(dispatch_get_main_queue(), ^{
 
-    if (_mainController.browsingForPlayers) {
-        _loginStatus.text = @"Connected.  Now searching for nearby players...";
-    }
-    else {
-        _loginStatus.text = @"Connected.  Touch here to search for players.";
-    }
-    
-    if (!_mainController.match) {
-        _connectedPlayers.text = @"Connected Players: None";
-    }
-    else {
-        NSMutableArray *playerNames = [NSMutableArray arrayWithCapacity:3];
-        for (GKPlayer *p in _mainController.match.players) {
-            [playerNames addObject:p.displayName];
-        }
-        _connectedPlayers.text = [NSString stringWithFormat:@"Connected Players: %@", [playerNames componentsJoinedByString:@", "]];
+        //Reload nearby players/disconnect
+        [self.tableView reloadData];
         
-        //Update chat label
-        if (_mainController.chat) {
-            _chatLabel.text = @"Toggle Chat OFF";
+        if (_mainController.browsingForPlayers) {
+            _loginStatus.text = @"Connected.  Now searching for nearby players...";
         }
         else {
-            _chatLabel.text = @"Toggle Chat ON";
+            _loginStatus.text = @"Connected.  Touch here to search for players.";
         }
-    }
+        
+        if (!_mainController.match) {
+            _connectedPlayers.text = @"Connected Players: None";
+        }
+        else {
+            NSMutableArray *playerNames = [NSMutableArray arrayWithCapacity:3];
+            for (GKPlayer *p in _mainController.match.players) {
+                [playerNames addObject:p.displayName];
+            }
+            _connectedPlayers.text = [NSString stringWithFormat:@"Connected Players: %@", [playerNames componentsJoinedByString:@", "]];
+            
+            //Update chat label
+            if (_mainController.chat) {
+                _chatLabel.text = @"Toggle Chat OFF";
+            }
+            else {
+                _chatLabel.text = @"Toggle Chat ON";
+            }
+        }
+        
+        //Update player label for active player subview
+        if (_pViewCtrlr) {
+            [_pViewCtrlr updatePlayerLabels];
+        }
 
-    //Update player label for active player subview
-    if (_pViewCtrlr) {
-        [_pViewCtrlr updatePlayerLabels];
-    }
+    });
+    
     
 }
 
